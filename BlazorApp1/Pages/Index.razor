@@ -1,0 +1,50 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<style>
+
+    h1{
+        color: rgb(5, 110, 0);
+        font-size: 50px;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-style: oblique;
+        font-feature-settings: "abvm";
+    }
+
+
+
+</style>
+
+
+<h1>Hello, world Developer!</h1>
+
+<div>
+    <InputFile multiple OnChange="Onchange"/>
+</div>
+
+<div>
+    @foreach(var imagen in imagenes)
+    {
+        <img src="@imagen"/>
+    }
+</div>
+
+@code{
+    private const int tamañodelarchivo = 4 * 2024 * 2024;
+    private List<string> imagenes = new List<string>(); 
+
+    async Task Onchange(InputFileChangeEventArgs e)
+    {
+        foreach(var archivo in e.GetMultipleFiles())
+        {
+            using var stream = archivo.OpenReadStream(tamañodelarchivo);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            imagenes.Add($"data:{archivo.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
+        }
+    }
+
+
+
+}
